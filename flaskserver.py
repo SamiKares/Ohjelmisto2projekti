@@ -1,9 +1,15 @@
 from flask import Flask, Response
-import database
+from database import Database
 import json
+from flask_cors import CORS
 
-
+db = Database()
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+current_ap = 'EGGW'
+print(Database.get_easterner_ap(db, current_ap))
+
 @app.route('/haistapaska')
 
 
