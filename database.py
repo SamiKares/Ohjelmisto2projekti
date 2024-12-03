@@ -1,5 +1,6 @@
 import mysql.connector
 from geopy import distance
+import requests
 
 class Database:
     def __init__(self):
@@ -68,7 +69,7 @@ class Database:
         for i in range(ran):
             result = cursor.fetchone()
             if result and 500 < self.calculate_distance(c_ap, result.get('ident')) :
-                tuple = self.calculate_distance(c_ap, result.get('ident')), result.get('name'), result.get('ident'), result.get('iso_country')
+                tuple = self.calculate_distance(c_ap, result.get('ident')), result.get('name'), result.get('ident'), result.get('iso_country'), result.get('latitude_deg'), result.get('logitude_deg')
                 listnine.append(tuple)
         sortedlist9 = sorted(listnine)
         a = 0
@@ -90,6 +91,9 @@ class Database:
         cursor.execute(sql, (start_money, cur_airport, tired))
         g_id = cursor.lastrowid
         return g_id
+    def getweatherat(self):
+        response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={input('Anna paikkakunnan nimi: ')},FI&units=metric&lang=fi&appid=8c6e9ac00b54d0d477cca6205d80e222").json()
+
 
 
 
