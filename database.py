@@ -1,5 +1,6 @@
 import mysql.connector
 from geopy import distance
+import requests
 
 class Database:
     def __init__(self):
@@ -68,7 +69,7 @@ class Database:
         for i in range(ran):
             result = cursor.fetchone()
             if result and 500 < self.calculate_distance(c_ap, result.get('ident')) :
-                tuple = self.calculate_distance(c_ap, result.get('ident')), result.get('name'), result.get('ident'), result.get('iso_country')
+                tuple = self.calculate_distance(c_ap, result.get('ident')), result.get('name'), result.get('ident'), result.get('iso_country'), result.get('latitude_deg'), result.get('logitude_deg')
                 listnine.append(tuple)
         sortedlist9 = sorted(listnine)
         a = 0
@@ -90,17 +91,12 @@ class Database:
         cursor.execute(sql, (start_money, cur_airport, tired))
         g_id = cursor.lastrowid
         return g_id
+    def getweatherat(self, targetap):
+        lat = self.get_airport_info(targetap).get('latitude_deg')
+        lon = self.get_airport_info(targetap).get('longitude_deg')
+        response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=fi&appid=8c6e9ac00b54d0d477cca6205d80e222").json()
+        return response
 
 
 
 
-#class Geopy:
-   # def __init__(self):
-    ##    pass
-   # def calculate_distance(current, target):
-        start = Database.get_airport_info(current)
-        end = Database.get_airport_info(target)
-        if start and end:
-            return distance.distance((start.get('latitude_deg'), start.get('longitude_deg')),
-                                    (end.get('latitude_deg'), end.get('longitude_deg'))).km
-        return None

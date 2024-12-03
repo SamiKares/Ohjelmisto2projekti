@@ -33,6 +33,11 @@ def flask_chekid():
     value = game_id
     return json.dumps(value)
 
+@app.route('/weatherat')
+def flask_weatherat():
+    value = Database.getweatherat(db, current_ap)
+    return json.dumps(value)
+
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
     vastaus = {
