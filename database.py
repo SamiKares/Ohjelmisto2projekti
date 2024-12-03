@@ -84,6 +84,12 @@ class Database:
             return distance.distance((start.get('latitude_deg'), start.get('longitude_deg')),
                                     (end.get('latitude_deg'), end.get('longitude_deg'))).km
         return None
+    def create_game(self, start_money, cur_airport, tired):
+        sql = "INSERT INTO game (money, location, tired) VALUES (%s, %s, %s);"
+        cursor = self.connection.cursor(dictionary=True)
+        cursor.execute(sql, (start_money, cur_airport, tired))
+        g_id = cursor.lastrowid
+        return g_id
 
 
 
