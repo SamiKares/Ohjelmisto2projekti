@@ -1,7 +1,7 @@
 //valitse kartan alkupaikka
 const map = L.map('map').setView([51.1657, 10.4515], 5);
 //tää on vaan testiä varte
-const currentloca = 'EGGW'
+let currentloca = 'EGGW'
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
@@ -116,13 +116,15 @@ async function displayAirports() {
 
         async function flyToAirport(code) {
             const response = await fetch(`http://127.0.0.1:3000/fly?to=${code}`, {
-                    method: 'POST'
+                    method: 'GET'
                 })
-            const result = await response.json();
-            if (result.success) {
+            const result = await response;
+            if (result.ok) {
                 console.log(`Flying to ${code}`);
-                await currentLocation();
-                console.log(currentLocation())
+                currentloca = code
+                let newLoc = await currentLocation();
+                await displayAirports();
+                console.log(newLoc)
             }
         }
 //errorrororo
