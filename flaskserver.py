@@ -45,6 +45,15 @@ def flask_weatherat():
     value = Database.getweatherat(db, airport)
     return json.dumps(value)
 
+@app.route('/fly')
+def flask_update_location():
+    targetap = request.args.get('to')
+    Database.update_location(db, targetap, tired, money, game_id)
+    value = Database.get_airport_info(db, targetap)
+    global current_ap
+    current_ap = targetap
+    return value
+
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
     vastaus = {
