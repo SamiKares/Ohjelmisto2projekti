@@ -1,6 +1,18 @@
 //valitse kartan alkupaikka
-const map = L.map('map').setView([51.1657, 10.4515], 5);
+ const map = L.map('map', {
+            center: [51.505, -0.09], // London coordinates
+            zoom: 6,
+            minZoom: 3,  // Minimum zoom level
+            maxZoom: 10, // Maximum zoom level
+            zoomControl: true, // Show the default zoom controls
+            zoomDelta: 0.5,    // Allow fractional zoom levels
+            zoomSnap: 0.5,     // Snap to 0.5 zoom levels
+            wheelDebounceTime: 40 // Debounce wheel events
+        });
 //tää on vaan testiä varte
+
+let currentLocationMarker = null;
+let airportMarkers = [];
 let currentloca = 'EGGW'
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -20,6 +32,9 @@ function transformAirportData(airport) {
 //piirtää nykyisen sijainnin
 async function currentLocation() {
     try {
+        if (currentLocationMarker) {
+            map.removeLayer(currentLocationMarker);
+        }
         const response = await fetch(`http://127.0.0.1:3000/currentloca?icao=${currentloca}`);
         const locationNow = await response.json();
 
@@ -43,7 +58,7 @@ async function currentLocation() {
             shadowAnchor: [4, 62],  // the same for the shadow
             popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
 });
-        const marker = L.marker([airport.latitude, airport.longitude], {
+        currentLocationMarker = L.marker([airport.latitude, airport.longitude], {
             icon: airportIcon
         }).addTo(map);
 
@@ -63,6 +78,9 @@ currentLocation()
 //easterner leaflettii
 async function displayAirports() {
     try {
+        airportMarkers.forEach(marker => map.removeLayer(marker));
+        airportMarkers = [];
+
         const response = await fetch('http://127.0.0.1:3000/easterner');
         const airportsObject = await response.json();
         const bounds = [];
@@ -70,6 +88,7 @@ async function displayAirports() {
         Object.values(airportsObject).forEach((airportData, index) => {
             const airport = transformAirportData(airportData);
             const marker = L.marker([airport.latitude, airport.longitude]).addTo(map);
+            airportMarkers.push(marker);
 //en tiedä miksi vaatii molemmat mut ei toiminut toisen poistaessa :D
     marker.bindPopup(`
         <div class="airport-popup">
