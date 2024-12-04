@@ -1,6 +1,11 @@
 import mysql.connector
+from flask import request
+from flask import jsonify
 from geopy import distance
 import requests
+
+from tesmi import get_easterner_ap
+
 
 class Database:
     def __init__(self):
@@ -69,7 +74,7 @@ class Database:
         for i in range(ran):
             result = cursor.fetchone()
             if result and 500 < self.calculate_distance(c_ap, result.get('ident')) :
-                tuple = self.calculate_distance(c_ap, result.get('ident')), result.get('name'), result.get('ident'), result.get('iso_country'), result.get('latitude_deg'), result.get('logitude_deg')
+                tuple = self.calculate_distance(c_ap, result.get('ident')), result.get('name'), result.get('ident'), result.get('iso_country'), result.get('latitude_deg'), result.get('longitude_deg')
                 listnine.append(tuple)
         sortedlist9 = sorted(listnine)
         a = 0
@@ -96,7 +101,6 @@ class Database:
         lon = self.get_airport_info(targetap).get('longitude_deg')
         response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=fi&appid=8c6e9ac00b54d0d477cca6205d80e222").json()
         return response
-
 
 
 

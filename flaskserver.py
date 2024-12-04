@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, jsonify, request
 from database import Database
 import json
 from flask_cors import CORS
@@ -20,8 +20,14 @@ first_target = 0
 @app.route('/easterner')
 def flask_easterner():
     value = Database.get_easterner_ap(db, current_ap)
-    return value
+    return jsonify(value)
 
+
+@app.route('/currentloca')
+def flask_current_loca():
+    icao = request.args.get('icao')
+    location = Database.get_airport_info(db, icao)
+    return jsonify(location)
 @app.route('/create_game')
 def flask_creategame():
     global game_id
@@ -35,7 +41,8 @@ def flask_chekid():
 
 @app.route('/weatherat')
 def flask_weatherat():
-    value = Database.getweatherat(db, current_ap)
+    airport = request.args.get('airport')
+    value = Database.getweatherat(db, airport)
     return json.dumps(value)
 
 @app.errorhandler(404)
