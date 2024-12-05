@@ -29,9 +29,8 @@ def flask_current_loca():
 @app.route('/create_game')
 def flask_creategame():
     global game_id
-    game_id = Database.create_game(db)[0]
-    print(game_id)
-    return "done"
+    game_id = Database.create_game(db)
+    return str(game_id)
 
 @app.route('/checkgameid')
 def flask_chekid():
@@ -48,7 +47,7 @@ def flask_weatherat():
 def flask_update_location():
     Database.save_visited_ports(db, Database.pull_location(db).get('location'))
     targetap = request.args.get('to')
-    Database.update_location(db, targetap, tired, money, game_id)
+    Database.update_location(db, targetap, Database.pull_location(db).get('tired'), Database.pull_location(db).get('money'), Database.pull_location(db).get('id'))
     value = Database.get_airport_info(db, targetap)
     return value
 

@@ -154,5 +154,13 @@ async function displayAirports() {
         });
         }
 }
-
+async function createGame(){
+    const response = await fetch(`http://127.0.0.1:3000/create_game`, {
+        method: 'GET'
+    })
+const result = await response;
+if (result.ok) {
+    console.log(`Created game ${response[0]}`);
+}
+}
 document.addEventListener('DOMContentLoaded', displayAirports);

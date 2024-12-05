@@ -91,9 +91,9 @@ class Database:
                                     (end.get('latitude_deg'), end.get('longitude_deg'))).km
         return None
     def create_game(self):
-        sql = "INSERT INTO game (money, location, tired) VALUES (1000, EGGW, 0);"
+        sql = "INSERT INTO game (money, location, tired) VALUES (%s, %s, %s);"
         cursor = self.connection.cursor(dictionary=True)
-        cursor.execute(sql)
+        cursor.execute(sql, (1000, 'EGGW', 0))
         g_id = cursor.lastrowid
         return g_id
     def getweatherat(self, targetap):
@@ -114,7 +114,7 @@ class Database:
         self.connection.cursor(dictionary=False).execute(sql)
         return
     def pull_location(self):
-        sql = "SELECT id, location, money, tired FROM game ORDER BY id DESC;"
+        sql = "SELECT id, location, money, tired FROM game ORDER BY id DESC"
         cursor = self.connection.cursor(dictionary=True, buffered=True)
         cursor.execute(sql)
         data = cursor.fetchone()
