@@ -15,6 +15,13 @@ let currentLocationMarker = null;
 let airportMarkers = [];
 let currentloca = 'EGGW'
 
+const planeIcon = L.divIcon({
+    html: '<i class="fas fa-plane"></i>',
+    className: 'plane-icon',
+    iconSize: [43, 43],
+    iconAnchor: [12, 12]
+});
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
@@ -113,8 +120,8 @@ async function displayAirports() {
                         <p>Distance: ${airport.distance.toFixed(2)} km</p>
                         <p>Weather: ${weatherData.main.temp.toFixed(1)}°C, ${weatherData.weather[0].description}</p>
                         <button class="fly-to">Fly here</button>
-                    `;
-
+                                  `;
+                    console.log(weatherData)
                     const flyButton = popupContent.querySelector('.fly-to');
                     flyButton.addEventListener('click', () => {
                         flyToAirport(airport.code);
@@ -132,20 +139,63 @@ async function displayAirports() {
             map.fitBounds(bounds);
         }
         //tähän pitää flaskaa siirtymä!
+//lisätty react motion scripta l.motion by Igor Vladyka
+async function flyToAirport(code) {
+    try {
+        // nykyinen sijainti muuttujaan
+        const fromAirport = await fetch(`http://127.0.0.1:3000/currentloca?icao=${currentloca}`);
+        const fromData = await fromAirport.json();
 
-        async function flyToAirport(code) {
-            const response = await fetch(`http://127.0.0.1:3000/fly?to=${code}`, {
-                    method: 'GET'
-                })
-            const result = await response;
-            if (result.ok) {
-                console.log(`Flying to ${code}`);
-                currentloca = code
-                let newLoc = await currentLocation();
-                await displayAirports();
-                console.log(newLoc)
+        // määränpää muuttujaan
+        const toAirport = await fetch(`http://127.0.0.1:3000/currentloca?icao=${code}`);
+        const toData = await toAirport.json();
+
+        // luo reitin
+        const coordinates = [
+            [fromData.latitude_deg, fromData.longitude_deg],
+            [toData.latitude_deg, toData.longitude_deg]
+        ];
+/*
+        // puhdistus
+        map.eachLayer((layer) => {
+            if (layer instanceof L.Motion.Polyline) {
+                map.removeLayer(layer);
             }
+        });
+*/
+        L.motion.polyline(coordinates, {
+            color: '#ff0000',
+            weight: 2,
+            dashArray: '5, 10'
+        }, {
+            auto: true,
+            duration: 4000,  // 3 seconds animation
+            easing: L.Motion.Ease.easeInOutQuart
+        }, {
+            removeOnEnd: true,
+            showMarker: true,
+            icon: planeIcon,
+        }).addTo(map);
+
+        map.fitBounds(coordinates);
+
+
+        const response = await fetch(`http://127.0.0.1:3000/fly?to=${code}`, {
+            method: 'GET'
+        });
+
+        if (response.ok) {
+            console.log(`Flying to ${code}`);
+            currentloca = code;
+            setTimeout(async () => {
+                await currentLocation();
+                await displayAirports();
+            }, 4000);  // Same as animation duration
         }
+    } catch (error) {
+        console.error('Error during flight:', error);
+    }
+}
 //errorrororo
     } catch (error) {
         console.error('Detailed error:', {
@@ -153,6 +203,9 @@ async function displayAirports() {
             error: error
         });
         }
-}
+   }
+     const motionScript = document.createElement('script');
+        motionScript.src = 'https://cdn.jsdelivr.net/npm/leaflet.motion@0.3.2/dist/leaflet.motion.min.js';
+        document.head.appendChild(motionScript);
 
 document.addEventListener('DOMContentLoaded', displayAirports);
