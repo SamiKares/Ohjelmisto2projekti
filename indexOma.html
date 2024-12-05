@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link href="css/style.css" rel="stylesheet">
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" defer></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.esm.js" defer></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <title>Maailman Ympäri</title>
+    
+</head>
+
+<body>
+    <div class="container">
+        <header class="page-header">
+            <div class="header-content">
+                <img src="img/map.jpg" alt="Old timey map" class="header-image">
+                <h1 class="page-title">Maailman Ympäri</h1>
+            </div>
+        </header>
+        <body style="background-image: url('img/cloudbg.gif');">
+
+        <main class="flex-wrap">
+            <div id="map">
+                <!-- <img class="responsive-img" src="img/finland.svg" alt="map of finland"> -->
+            </div>
+            <div class="boxes">
+                <section class="box">
+                    <header>
+                        <h2 id="airport-name">Airport Name</h2>
+                    </header>
+                    <table id="weather">
+                        <tr>
+                            <td id="airport-temp">
+                                <img src="img/cold.gif" alt="Temperature GIF">
+                                <p class="text">10°C</p>
+                            </td>
+                            <td id="airport-conditions">
+                                <img src="img/cloudy.gif" alt="Weather GIF">
+                                <p>Cloudy</p>
+                            </td>
+                            <td id="airport-wind">
+                                <img src="img/wind.gif" alt="Wind GIF">
+                                <p>40m/s</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Temperature</strong></td>
+                            <td><strong>Weather</strong></td>
+                            <td><strong>Wind</strong></td>
+                        </tr>
+                    </table>
+                </section>
+                
+                <section class="box">
+                    <header>
+                        <h2>Parametrit</h2>
+                    </header>
+                    <h3 id="player-name">Pelaajan nimi:</h3>
+                    <ul id="goals" class="flex-wrap">
+                        <li>
+                            <figure>
+                                <img src="img/low-battery.png" alt="Tiredness">
+                                <figcaption>Väsymys</figcaption>
+                            </figure>
+                        </li>
+                        <li>
+                            <figure>
+                                <img src="img/dollar.png" alt="Money">
+                                <figcaption>Rahat</figcaption>
+                            </figure>
+                        </li>
+                        <li>
+                            <figure>
+                                <img src="img/carbon-neutral.png" alt="CO2">
+                                <figcaption>Päästöt(kg)</figcaption>
+                            </figure>
+                        </li>
+                        <li>
+                            <figure>
+                                <img src="img/hourglass.png" alt="time">
+                                <figcaption>Aika</figcaption>
+                            </figure>
+                        </li>
+                    </ul>
+                </section>
+<section class="box destination-progress">
+    <header>
+        <h2>Välietapit</h2>
+    </header>
+    <div class="checkpoint-container">
+        <div class="checkpoint" data-airport="HECA">
+            <span class="checkpoint-name">Cairo</span>
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <div class="checkpoint" data-airport="VECC">
+            <span class="checkpoint-name">Kolkata</span>
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <div class="checkpoint" data-airport="VHHH">
+            <span class="checkpoint-name">Hong Kong</span>
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <div class="checkpoint" data-airport="RJTT">
+            <span class="checkpoint-name">Tokyo</span>
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <div class="checkpoint" data-airport="KSFO">
+            <span class="checkpoint-name">San Francisco</span>
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <div class="checkpoint" data-airport="KJFK">
+            <span class="checkpoint-name">New York</span>
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <div class="checkpoint" data-airport="EGGW">
+            <span class="checkpoint-name">London</span>
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+    </div>
+</section>
+            </div>
+        </main>
+        <div class="goal hide">
+            <h2>Peli ohi</h2>
+            <p>
+                <span id="goal-txt">Peli ohi!</span>
+            </p>
+        </div>
+    </div>
+
+    <div id="player-modal">
+        <form id="player-form">
+            <input id="player-input" type="text" placeholder="Player name" required>
+            <input type="submit" value="Start game">
+        </form>
+    </div>
+
+</body>
+
+</html>
