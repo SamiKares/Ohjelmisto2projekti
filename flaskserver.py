@@ -7,19 +7,17 @@ db = Database()
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-current_ap = 'EGGW'
 game_id = ''
 total_travel_dist = 0
 total_co2_spent = 0
 money = 1000
 tired = 0
 time_spent = 0
-current_ap = 'EGGW'
 first_target = 0
 
 @app.route('/easterner')
 def flask_easterner():
-    value = Database.get_easterner_ap(db, current_ap)
+    value = Database.get_easterner_ap(db, Database.pull_location(db).get('location'))
     return jsonify(value)
 
 
@@ -31,7 +29,8 @@ def flask_current_loca():
 @app.route('/create_game')
 def flask_creategame():
     global game_id
-    game_id = Database.create_game(db, money, current_ap, tired)
+    game_id = Database.create_game(db)[0]
+    print(game_id)
     return "done"
 
 @app.route('/checkgameid')
@@ -47,12 +46,16 @@ def flask_weatherat():
 
 @app.route('/fly')
 def flask_update_location():
+    Database.save_visited_ports(db, Database.pull_location(db).get('location'))
     targetap = request.args.get('to')
     Database.update_location(db, targetap, tired, money, game_id)
     value = Database.get_airport_info(db, targetap)
-    global current_ap
-    current_ap = targetap
     return value
+
+@app.route('/endgame')
+def flask_end_game():
+    data = Database.pull_location(db)
+    return data
 
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
