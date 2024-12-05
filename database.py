@@ -4,7 +4,7 @@ from flask import jsonify
 from geopy import distance
 import requests
 
-from tesmi import get_easterner_ap
+
 
 
 class Database:
@@ -90,10 +90,10 @@ class Database:
             return distance.distance((start.get('latitude_deg'), start.get('longitude_deg')),
                                     (end.get('latitude_deg'), end.get('longitude_deg'))).km
         return None
-    def create_game(self, start_money, cur_airport, tired):
+    def create_game(self):
         sql = "INSERT INTO game (money, location, tired) VALUES (%s, %s, %s);"
         cursor = self.connection.cursor(dictionary=True)
-        cursor.execute(sql, (start_money, cur_airport, tired))
+        cursor.execute(sql, (1000, 'EGGW', 0))
         g_id = cursor.lastrowid
         return g_id
     def getweatherat(self, targetap):
@@ -101,6 +101,23 @@ class Database:
         lon = self.get_airport_info(targetap).get('longitude_deg')
         response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=fi&appid=8c6e9ac00b54d0d477cca6205d80e222").json()
         return response
-
+    def save_visited_ports(self, currentap):
+        icao = self.get_airport_info(currentap).get('ident')
+        lat = self.get_airport_info(currentap).get('latitude_deg')
+        lon = self.get_airport_info(currentap).get('longitude_deg')
+        sql = "INSERT INTO visitedap (ICAO, LATITUDE, LONGITUDE) VALUES (%s, %s, %s);"
+        cursor = self.connection.cursor(dictionary=False)
+        cursor.execute(sql, (icao, lat, lon))
+        return
+    def truncate(self):
+        sql = "TRUNCATE visitedap;"
+        self.connection.cursor(dictionary=False).execute(sql)
+        return
+    def pull_location(self):
+        sql = "SELECT id, location, money, tired FROM game ORDER BY id DESC"
+        cursor = self.connection.cursor(dictionary=True, buffered=True)
+        cursor.execute(sql)
+        data = cursor.fetchone()
+        return data
 
 
