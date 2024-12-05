@@ -160,7 +160,7 @@ async function createGame(){
     })
 const result = await response;
 if (result.ok) {
-    console.log(`Created game ${response[0]}`);
+    console.log(`Created game ${await result.json()}`);
 }
 }
 document.addEventListener('DOMContentLoaded', displayAirports);

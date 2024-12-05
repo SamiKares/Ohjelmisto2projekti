@@ -51,7 +51,7 @@ def flask_update_location():
     value = Database.get_airport_info(db, targetap)
     return value
 
-@app.route('/endgame')
+@app.route('/pull_loca')
 def flask_end_game():
     data = Database.pull_location(db)
     return data
