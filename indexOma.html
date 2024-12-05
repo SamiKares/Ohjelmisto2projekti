@@ -2,17 +2,24 @@
 <html lang="en">
 
 <head>
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
-    <link href="css/style.css" rel="stylesheet">
-    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" defer></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.esm.js" defer></script>
-    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.js" defer></script>
-    <script src="js/main.js" defer></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="style.css" rel="stylesheet">
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.motion@0.3.2/dist/leaflet.motion.min.js"></script>
+    <script src="Projektitestiscript.js" defer></script>
+
     <title>Maailman Ympäri</title>
-    
+</head>
 </head>
 
 <body>
@@ -38,15 +45,15 @@
                         <tr>
                             <td id="airport-temp">
                                 <img src="img/cold.gif" alt="Temperature GIF">
-                                <p class="text">10°C</p>
+                                <p id="airport-temp-print">10°C</p>
                             </td>
                             <td id="airport-conditions">
                                 <img src="img/cloudy.gif" alt="Weather GIF">
-                                <p>Cloudy</p>
+                                <p id="airportcondition"></p>
                             </td>
                             <td id="airport-wind">
                                 <img src="img/wind.gif" alt="Wind GIF">
-                                <p>40m/s</p>
+                                <p id="airport-wind-print"></p>
                             </td>
                         </tr>
                         <tr>
@@ -153,13 +160,7 @@
                 <span id="goal-txt">Peli ohi!</span>
             </p>
         </div>
-    </div>
 
-    <div id="player-modal">
-        <form id="player-form">
-            <input id="player-input" type="text" placeholder="Player name" required>
-            <input type="submit" value="Start game">
-        </form>
     </div>
 
 </body>

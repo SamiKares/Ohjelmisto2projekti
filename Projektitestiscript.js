@@ -122,6 +122,11 @@ async function displayAirports() {
                         <button class="fly-to">Fly here</button>
                                   `;
                     console.log(weatherData)
+                    //ui update tesmi töss
+                    document.getElementById('airportcondition').innerHTML = `${weatherData.weather[0].description}`;
+                    document.getElementById('airport-temp-print').innerHTML = `${weatherData.main.temp.toFixed(1)}°C`;
+                    document.getElementById('airport-wind-print').innerHTML = `${weatherData.wind.speed}M/S`;
+                    document.getElementById('airport-name').innerHTML = `${airport.name}`
                     const flyButton = popupContent.querySelector('.fly-to');
                     flyButton.addEventListener('click', () => {
                         flyToAirport(airport.code);
@@ -204,8 +209,5 @@ async function flyToAirport(code) {
         });
         }
    }
-     const motionScript = document.createElement('script');
-        motionScript.src = 'https://cdn.jsdelivr.net/npm/leaflet.motion@0.3.2/dist/leaflet.motion.min.js';
-        document.head.appendChild(motionScript);
 
 document.addEventListener('DOMContentLoaded', displayAirports);
