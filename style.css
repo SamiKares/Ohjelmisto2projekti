@@ -415,3 +415,8 @@ main {
   margin-bottom: 5px;
   font-size: 0.8em;
 }
+
+.moving-plane {
+    background: none;
+    border: none;
+}

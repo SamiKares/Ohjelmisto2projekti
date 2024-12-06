@@ -10,17 +10,10 @@
             wheelDebounceTime: 40 // Debounce wheel events
         });
 //tää on vaan testiä varte
-
+let distancetraveled = 0
 let currentLocationMarker = null;
 let airportMarkers = [];
 let currentloca = 'EGGW'
-
-const planeIcon = L.divIcon({
-    html: '<i class="fas fa-plane"></i>',
-    className: 'plane-icon',
-    iconSize: [43, 43],
-    iconAnchor: [12, 12]
-});
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
@@ -84,6 +77,7 @@ async function currentLocation() {
 currentLocation()
 //easterner leaflettii
 async function displayAirports() {
+    addHours(3)
     try {
         airportMarkers.forEach(marker => map.removeLayer(marker));
         airportMarkers = [];
@@ -129,7 +123,15 @@ async function displayAirports() {
                     document.getElementById('airport-name').innerHTML = `${airport.name}`
                     const flyButton = popupContent.querySelector('.fly-to');
                     flyButton.addEventListener('click', () => {
+                        const adderdistance = parseFloat(`${airport.distance.toFixed(2)}`)
+                        distancetraveled += adderdistance
+                        console.log(`${airport.distance.toFixed(2)}`)
                         flyToAirport(airport.code);
+                        document.getElementById('distance-travel').textContent = `${Math.round(distancetraveled)} Km `
+                        console.log(distancetraveled)
+                        const flightTime = adderdistance/500
+                        console.log(flightTime)
+                        addHours(flightTime)
                     });
 
                     marker.setPopupContent(popupContent);
@@ -150,7 +152,7 @@ async function flyToAirport(code) {
         // nykyinen sijainti muuttujaan
         const fromAirport = await fetch(`http://127.0.0.1:3000/currentloca?icao=${currentloca}`);
         const fromData = await fromAirport.json();
-
+        console.log(fromAirport)
         // määränpää muuttujaan
         const toAirport = await fetch(`http://127.0.0.1:3000/currentloca?icao=${code}`);
         const toData = await toAirport.json();
@@ -168,23 +170,32 @@ async function flyToAirport(code) {
             }
         });
 */
-        L.motion.polyline(coordinates, {
-            color: '#ff0000',
-            weight: 2,
-            dashArray: '5, 10'
-        }, {
-            auto: true,
-            duration: 4000,  // 3 seconds animation
-            easing: L.Motion.Ease.easeInOutQuart
-        }, {
-            removeOnEnd: true,
-            showMarker: true,
-            icon: planeIcon,
-        }).addTo(map);
+const motionPolyline = L.motion.polyline(coordinates, {
+    // Style options
+    color: '#ff0000',  // or 'khaki' depending on your preference
+    weight: 2,
+    dashArray: '5, 10'
+}, {
+    // Motion options
+    auto: true,
+    duration: 3000,    // 7 seconds animation (using the longer duration from second example)
+    easing: L.Motion.Ease.easeInOutQuart
+}, {
+    // Marker options
+    removeOnEnd: true,
+    showMarker: true,
+    icon: L.divIcon({
+        html: "<i class='fas fa-plane' style='transform: ; font-size: 24px; color: black;'></i>",
+        iconSize: L.point(24, 24),
+        iconAnchor: [12, 12],
+        className: 'moving-plane'
 
-        map.fitBounds(coordinates);
+    })
+});
 
-
+// Add to map and fit bounds
+motionPolyline.addTo(map);
+map.fitBounds(coordinates);
         const response = await fetch(`http://127.0.0.1:3000/fly?to=${code}`, {
             method: 'GET'
         });
@@ -209,5 +220,11 @@ async function flyToAirport(code) {
         });
         }
    }
+let totalHours = 0;
 
+function addHours(hoursToAdd) {
+    totalHours += hoursToAdd;
+    document.getElementById('time').textContent =
+        `Hours passed: ${Math.round(totalHours)}`;
+}
 document.addEventListener('DOMContentLoaded', displayAirports);
