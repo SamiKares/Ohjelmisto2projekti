@@ -119,5 +119,16 @@ class Database:
         cursor.execute(sql)
         data = cursor.fetchone()
         return data
+    def checkforgoal(self, c_ap):
+        lista = []
+        sql = "SELECT ident FROM airport WHERE longitude_deg > %s ORDER BY longitude_deg;"
+        cursor = self.connection.cursor(dictionary=True, buffered=True)
+        cursor.execute(sql, (self.get_airport_info(c_ap).get('longitude_deg'),))
+        data = cursor.fetchall()
+        for i in data:
+            lista.append(i)
+            if len(lista)==9:
+                break
+        return lista
 
 

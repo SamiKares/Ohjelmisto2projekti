@@ -14,6 +14,8 @@ money = 1000
 tired = 0
 time_spent = 0
 first_target = 0
+destinations = ["HECA", "VECC", "VOCI", "VHHH", "RJTT", "KSFO"
+,"KJFK", "EGGW"]
 
 @app.route('/easterner')
 def flask_easterner():
@@ -56,6 +58,14 @@ def flask_end_game():
     data = Database.pull_location(db)
     return data
 
+@app.route('/checkgoal')
+def flask_check_goal():
+    value = Database.checkforgoal(db, Database.pull_location(db).get('location'))
+    for i in range(len(value)):
+        for a in destinations:
+            if value[i]['ident'] == a:
+                return a
+    return "no balls"
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
     vastaus = {
