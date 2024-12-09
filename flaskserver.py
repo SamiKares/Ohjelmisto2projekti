@@ -19,6 +19,16 @@ destinations = ["HECA", "VECC", "VHHH", "RJTT", "KSFO"
 visited = {"HECA":0, "VECC":0, "VHHH":0, "RJTT":0, "KSFO":0
 ,"KJFK":0, "EGGW":0}
 
+def relev_info(db, target):
+        targetname = Database.get_airport_info(db, target).get('name')
+        targetlat = Database.get_airport_info(db, target).get('latitude_deg')
+        targetlon = Database.get_airport_info(db, target).get('longitude_deg')
+        targetcountry = Database.get_airport_info(db, target).get('iso_country')
+        return {"targetname":targetname, "targetlat":targetlat,"targetlon":targetlon,"targetcountry":targetcountry}
+def endvalue(target, info):
+        endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), target), info["targetname"], target, info["targetcountry"], info["targetlat"], info["targetlon"]]}
+
+
 @app.route('/easterner')
 def flask_easterner():
     global visited
@@ -31,28 +41,24 @@ def flask_easterner():
     for i in range(len(checkgoal)):
         for a in destinations:
             if checkgoal[i]['ident'] == a:
-                targetname = Database.get_airport_info(db, a).get('name')
-                targetlat = Database.get_airport_info(db, a).get('latitude_deg')
-                targetlon = Database.get_airport_info(db, a).get('longitude_deg')
-                targetcountry = Database.get_airport_info(db, a).get('iso_country')
-                endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), a), targetname, a, targetcountry, targetlat, targetlon]}
-                return endvalue
+                info = relev_info(db, a)
+                #endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), a), info["targetname"], a, info["targetcountry"], info["targetlat"], info["targetlon"]]}
+                return "1"
     for i in range(len(value)):
         for a in destinations:
             if value[i+1][2]==a:
                 return {"1":value[i+1]}
     if currloc == "RJTT":
-        targetname = Database.get_airport_info(db, destinations[4]).get('name')
-        targetlat = Database.get_airport_info(db, destinations[4]).get('latitude_deg')
-        targetlon = Database.get_airport_info(db, destinations[4]).get('longitude_deg')
-        targetcountry = Database.get_airport_info(db, a).get('iso_country')
-        return {"1":[Database.calculate_distance(db, currloc, destinations[4]), targetname, destinations[4], targetcountry, targetlat, targetlon]}
-    if currloc == "KSFO":
-        targetname = Database.get_airport_info(db, destinations[6]).get('name')
-        targetlat = Database.get_airport_info(db, destinations[6]).get('latitude_deg')
-        targetlon = Database.get_airport_info(db, destinations[6]).get('longitude_deg')
-        targetcountry = Database.get_airport_info(db, a).get('iso_country')
-        return {"1":[Database.calculate_distance(db, currloc, destinations[6]), targetname, destinations[6], targetcountry, targetlat, targetlon]}
+        info = relev_info(db, destinations[4])
+        endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), destinations[4]), info["targetname"], destinations[4], info["targetcountry"], info["targetlat"], info["targetlon"]]}
+        return endvalue
+    if currloc == "KJFK":
+        info = relev_info(db, destinations[6])
+        endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), destinations[6]), info["targetname"], destinations[6], info["targetcountry"], info["targetlat"], info["targetlon"]]}
+        return endvalue
+    if Database.get_airport_info(db, currloc).get('longitude_deg') > Database.get_airport_info(db, "HECA").get('longitude_deg') and visited["HECA"]==0:
+        info = relev_info(db, "HECA")
+        endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), "HECA"), info["targetname"], "HECA", info["targetcountry"], info["targetlat"], info["targetlon"]]}
     return jsonify(value)
 
 
@@ -120,3 +126,12 @@ def page_not_found(virhekoodi):
 if __name__ == '__main__':
     app.run(use_reloader=True, host='127.0.0.1', port=3000)
 
+
+def relev_info(db, target):
+        targetname = Database.get_airport_info(db, target).get('name')
+        targetlat = Database.get_airport_info(db, target).get('latitude_deg')
+        targetlon = Database.get_airport_info(db, target).get('longitude_deg')
+        targetcountry = Database.get_airport_info(db, target).get('iso_country')
+        return {"targetname":targetname, "targetlat":targetlat,"targetlon":targetlon,"targetcountry":targetcountry}
+def endvalue(target, info):
+        endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), target), info["targetname"], target, info["targetcountry"], info["targetlat"], info["targetlon"]]}
