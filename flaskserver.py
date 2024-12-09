@@ -16,19 +16,43 @@ time_spent = 0
 first_target = 0
 destinations = ["HECA", "VECC", "VHHH", "RJTT", "KSFO"
 ,"KJFK", "EGGW"]
+visited = {"HECA":0, "VECC":0, "VHHH":0, "RJTT":0, "KSFO":0
+,"KJFK":0, "EGGW":0}
 
 @app.route('/easterner')
 def flask_easterner():
-    value = Database.get_easterner_ap(db, Database.pull_location(db).get('location'))
-    checkgoal = Database.checkforgoal(db, Database.pull_location(db).get('location'))
+    global visited
+    currloc = Database.pull_location(db).get('location')
+    for i in destinations:
+        if currloc == i:
+            visited[i] = 1
+    value = Database.get_easterner_ap(db, currloc)
+    checkgoal = Database.checkforgoal(db, currloc)
     for i in range(len(checkgoal)):
         for a in destinations:
             if checkgoal[i]['ident'] == a:
                 targetname = Database.get_airport_info(db, a).get('name')
                 targetlat = Database.get_airport_info(db, a).get('latitude_deg')
                 targetlon = Database.get_airport_info(db, a).get('longitude_deg')
-                endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), a), targetname, a, targetlat, targetlon]}
+                targetcountry = Database.get_airport_info(db, a).get('iso_country')
+                endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), a), targetname, a, targetcountry, targetlat, targetlon]}
                 return endvalue
+    for i in range(len(value)):
+        for a in destinations:
+            if value[i+1][2]==a:
+                return {"1":value[i+1]}
+    if currloc == "RJTT":
+        targetname = Database.get_airport_info(db, destinations[4]).get('name')
+        targetlat = Database.get_airport_info(db, destinations[4]).get('latitude_deg')
+        targetlon = Database.get_airport_info(db, destinations[4]).get('longitude_deg')
+        targetcountry = Database.get_airport_info(db, a).get('iso_country')
+        return {"1":[Database.calculate_distance(db, currloc, destinations[4]), targetname, destinations[4], targetcountry, targetlat, targetlon]}
+    if currloc == "KSFO":
+        targetname = Database.get_airport_info(db, destinations[6]).get('name')
+        targetlat = Database.get_airport_info(db, destinations[6]).get('latitude_deg')
+        targetlon = Database.get_airport_info(db, destinations[6]).get('longitude_deg')
+        targetcountry = Database.get_airport_info(db, a).get('iso_country')
+        return {"1":[Database.calculate_distance(db, currloc, destinations[6]), targetname, destinations[6], targetcountry, targetlat, targetlon]}
     return jsonify(value)
 
 
@@ -39,6 +63,9 @@ def flask_current_loca():
     return jsonify(location)
 @app.route('/create_game')
 def flask_creategame():
+    global visited
+    for i in visited:
+        visited[i] = 0
     global game_id
     game_id = Database.create_game(db)
     return str(game_id)
@@ -75,6 +102,11 @@ def flask_check_goal():
             if value[i]['ident'] == a:
                 return a
     return "no balls"
+
+@app.route('/visitedgoals')
+def flask_visited():
+    data = visited
+    return data
 
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
