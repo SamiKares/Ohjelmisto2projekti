@@ -339,70 +339,45 @@ main {
   overflow: hidden;
 }
 
-.checkpoint-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100px;
-  overflow: hidden;
-}
-
-.checkpoint-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100px;
-  overflow: hidden;
-}
-
-.checkpoint-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100px;
-  overflow: hidden;
-}
-
 .checkpoint {
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: auto;
   font-size: 2em;
   text-align: center;
-  right: -100%; /* Start from right side */
-  transition: right 0.5s ease, opacity 0.5s ease;
+  left: -100%; /* Start from left side */
+  transition: left 0.5s ease, opacity 0.5s ease;
   opacity: 0;
+  padding: 0 20px;
 }
 
 .checkpoint:nth-child(1) {
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   opacity: 1;
 }
 
 .checkpoint:nth-child(2) {
-  right: 0;
+  left: calc(50% + 100px);
+  transform: translateX(-50%);
   opacity: 0.5;
 }
 
 .checkpoint:nth-child(3) {
-  right: 0;
+  left: calc(50% + 200px);
+  transform: translateX(-50%);
   opacity: 0.2;
 }
 
 .checkpoint.active {
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   opacity: 1;
 }
 .checkpoint.next {
-  right: 0,2;
+  transform: translateX(200px);
   opacity: 0;
 }
 
