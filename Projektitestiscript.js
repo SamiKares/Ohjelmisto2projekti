@@ -224,6 +224,26 @@ let totalHours = 0;
 let tirednessHours = 0;
 let tirednessMeter = 0;
 
+//checkpointin checkaaminen, heh
+function updateCheckpoints(currentCheckpointIndex) {
+    const checkpoints = document.querySelectorAll('.checkpoint');
+    
+    checkpoints.forEach((checkpoint, index) => {
+        if (index <= currentCheckpointIndex) {
+            checkpoint.classList.add('active');
+        }
+    });
+}
+
+function onCheckpointReached(checkpointName) {
+    const checkpoints = document.querySelectorAll('.checkpoint');
+    const currentIndex = Array.from(checkpoints).findIndex(
+        checkpoint => checkpoint.querySelector('.checkpoint-name').textContent === checkpointName
+    );
+    
+    updateCheckpoints(currentIndex);
+}
+
 //peliaika lentoväsymys functio
 function travelData(hoursToAdd) {
     totalHours += hoursToAdd;
