@@ -14,12 +14,21 @@ money = 1000
 tired = 0
 time_spent = 0
 first_target = 0
-destinations = ["HECA", "VECC", "VOCI", "VHHH", "RJTT", "KSFO"
+destinations = ["HECA", "VECC", "VHHH", "RJTT", "KSFO"
 ,"KJFK", "EGGW"]
 
 @app.route('/easterner')
 def flask_easterner():
     value = Database.get_easterner_ap(db, Database.pull_location(db).get('location'))
+    checkgoal = Database.checkforgoal(db, Database.pull_location(db).get('location'))
+    for i in range(len(checkgoal)):
+        for a in destinations:
+            if checkgoal[i]['ident'] == a:
+                targetname = Database.get_airport_info(db, a).get('name')
+                targetlat = Database.get_airport_info(db, a).get('latitude_deg')
+                targetlon = Database.get_airport_info(db, a).get('longitude_deg')
+                endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), a), targetname, a, targetlat, targetlon]}
+                return endvalue
     return jsonify(value)
 
 
@@ -66,6 +75,7 @@ def flask_check_goal():
             if value[i]['ident'] == a:
                 return a
     return "no balls"
+
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
     vastaus = {
