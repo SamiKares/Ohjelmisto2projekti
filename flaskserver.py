@@ -16,6 +16,8 @@ time_spent = 0
 first_target = 0
 destinations = ["HECA", "VECC", "VHHH", "RJTT", "KSFO"
 ,"KJFK", "EGGW"]
+pretokio = ["HECA", "VECC", "VHHH", "RJTT"]
+posttokio = ["KSFO","KJFK", "EGGW"]
 visited = {"HECA":0, "VECC":0, "VHHH":0, "RJTT":0, "KSFO":0
 ,"KJFK":0, "EGGW":0}
 
@@ -25,9 +27,9 @@ def relev_info(db, target):
         targetlon = Database.get_airport_info(db, target).get('longitude_deg')
         targetcountry = Database.get_airport_info(db, target).get('iso_country')
         return {"targetname":targetname, "targetlat":targetlat,"targetlon":targetlon,"targetcountry":targetcountry}
-def endvalue(target, info):
+def finalvalue(target, info):
         endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), target), info["targetname"], target, info["targetcountry"], info["targetlat"], info["targetlon"]]}
-
+        return endvalue
 
 @app.route('/easterner')
 def flask_easterner():
@@ -42,23 +44,31 @@ def flask_easterner():
         for a in destinations:
             if checkgoal[i]['ident'] == a:
                 info = relev_info(db, a)
-                #endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), a), info["targetname"], a, info["targetcountry"], info["targetlat"], info["targetlon"]]}
-                return "1"
+                endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), a), info["targetname"], a, info["targetcountry"], info["targetlat"], info["targetlon"]]}
     for i in range(len(value)):
         for a in destinations:
             if value[i+1][2]==a:
                 return {"1":value[i+1]}
     if currloc == "RJTT":
         info = relev_info(db, destinations[4])
-        endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), destinations[4]), info["targetname"], destinations[4], info["targetcountry"], info["targetlat"], info["targetlon"]]}
-        return endvalue
+        value = finalvalue(destinations[4], info)
+        return value
     if currloc == "KJFK":
         info = relev_info(db, destinations[6])
         endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), destinations[6]), info["targetname"], destinations[6], info["targetcountry"], info["targetlat"], info["targetlon"]]}
         return endvalue
-    if Database.get_airport_info(db, currloc).get('longitude_deg') > Database.get_airport_info(db, "HECA").get('longitude_deg') and visited["HECA"]==0:
-        info = relev_info(db, "HECA")
-        endvalue = {"1":[Database.calculate_distance(db, Database.pull_location(db).get('location'), "HECA"), info["targetname"], "HECA", info["targetcountry"], info["targetlat"], info["targetlon"]]}
+    if visited["KSFO"]==0:
+        for i in pretokio:
+            if Database.get_airport_info(db, currloc).get('longitude_deg') > Database.get_airport_info(db, i).get('longitude_deg') and visited[i]==0:
+                info = relev_info(db, i)
+                endvalue = finalvalue(i, info)
+                return endvalue
+    if visited["KSFO"]==1:
+         for i in posttokio:
+            if Database.get_airport_info(db, currloc).get('longitude_deg') > Database.get_airport_info(db, i).get('longitude_deg') and visited[i]==0:
+                info = relev_info(db, i)
+                endvalue = finalvalue(i, info)
+                return endvalue
     return jsonify(value)
 
 
