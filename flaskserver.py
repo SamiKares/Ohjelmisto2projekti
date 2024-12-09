@@ -106,7 +106,7 @@ def flask_check_goal():
 @app.route('/visitedgoals')
 def flask_visited():
     data = visited
-    return data
+    return jsonify(data)
 
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
