@@ -227,21 +227,18 @@ let tirednessMeter = 0;
 //checkpointin checkaaminen, heh
 function updateCheckpoints(currentCheckpointIndex) {
     const checkpoints = document.querySelectorAll('.checkpoint');
-    
+
     checkpoints.forEach((checkpoint, index) => {
-        if (index <= currentCheckpointIndex) {
+        if (index === currentCheckpointIndex) {
             checkpoint.classList.add('active');
+            checkpoint.classList.remove('visited');
+        } else if (index < currentCheckpointIndex) {
+            checkpoint.classList.add('visited');
+            checkpoint.classList.remove('active');
+        } else {
+            checkpoint.classList.remove('active', 'visited');
         }
     });
-}
-
-function onCheckpointReached(checkpointName) {
-    const checkpoints = document.querySelectorAll('.checkpoint');
-    const currentIndex = Array.from(checkpoints).findIndex(
-        checkpoint => checkpoint.querySelector('.checkpoint-name').textContent === checkpointName
-    );
-    
-    updateCheckpoints(currentIndex);
 }
 
 //peliaika lentoväsymys functio
@@ -280,3 +277,4 @@ function updateTiredness() {
         `Väsymyksesi: ${Math.round(tirednessMeter)} / 100%`;
 }
 document.addEventListener('DOMContentLoaded', displayAirports);
+
