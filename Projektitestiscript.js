@@ -77,7 +77,7 @@ async function currentLocation() {
 currentLocation()
 //easterner leaflettii
 async function displayAirports() {
-    addHours(3)
+    travelData(2)
     try {
         airportMarkers.forEach(marker => map.removeLayer(marker));
         airportMarkers = [];
@@ -131,7 +131,7 @@ async function displayAirports() {
                         console.log(distancetraveled)
                         const flightTime = adderdistance/500
                         console.log(flightTime)
-                        addHours(flightTime)
+                        travelData(flightTime)
                     });
 
                     marker.setPopupContent(popupContent);
@@ -178,7 +178,7 @@ const motionPolyline = L.motion.polyline(coordinates, {
 }, {
     // Motion options
     auto: true,
-    duration: 3000,    // 7 seconds animation (using the longer duration from second example)
+    duration: 3500,    // 7 seconds animation (using the longer duration from second example)
     easing: L.Motion.Ease.easeInOutQuart
 }, {
     // Marker options
@@ -206,7 +206,7 @@ map.fitBounds(coordinates);
             setTimeout(async () => {
                 await currentLocation();
                 await displayAirports();
-            }, 4000);  // Same as animation duration
+            }, 3500);  // Same as animation duration
         }
     } catch (error) {
         console.error('Error during flight:', error);
@@ -221,10 +221,42 @@ map.fitBounds(coordinates);
         }
    }
 let totalHours = 0;
+let tirednessHours = 0;
+let tirednessMeter = 0;
 
-function addHours(hoursToAdd) {
+//peliaika lentoväsymys functio
+function travelData(hoursToAdd) {
     totalHours += hoursToAdd;
-    document.getElementById('time').textContent =
-        `Hours passed: ${Math.round(totalHours)}`;
+    tirednessHours += hoursToAdd;
+    tirednessMeter = tirednessHours * 5;
+
+
+    document.getElementById('time').textContent = `Hours passed: ${Math.round(totalHours)}`;
+    updateTiredness();
+
+
+    if (tirednessHours >= 20) {
+        alert("olet todella väsynyt sinun täytyy levätä");
+        totalHours += 8;
+        resetTiredness();
+        updateTiredness();
+    }
+}
+
+document.getElementById('restbutton').addEventListener('click', () => {
+    resetTiredness();
+    totalHours += 5;
+    updateTiredness();
+});
+
+
+function resetTiredness() {
+    tirednessMeter = 0;
+    tirednessHours = 0;
+}
+
+function updateTiredness() {
+    document.getElementById('tiredness').textContent =
+        `Väsymyksesi: ${Math.round(tirednessMeter)} / 100%`;
 }
 document.addEventListener('DOMContentLoaded', displayAirports);
