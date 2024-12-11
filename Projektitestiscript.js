@@ -189,6 +189,10 @@ async function displayAirports() {
 
 async function flyToAirport(code) {
     try {
+        if (code == 'EGGW'){
+            await fetch(`http://127.0.0.1:3000/recordscore?dt=${distancetraveled}&co=${distancetraveled}&ts=${totalHours}`);
+            alert('Läpäisit pelin')
+        }
         const fromAirport = await fetch(`http://127.0.0.1:3000/currentloca`);
         const fromData = await fromAirport.json();
 
@@ -199,7 +203,19 @@ async function flyToAirport(code) {
                 [fromData.latitude_deg, fromData.longitude_deg],
                 [toData.latitude_deg, toData.longitude_deg]
             ];
-
+        let fromLng = fromData.longitude_deg;
+        let toLng = toData.longitude_deg;
+        if (fromLng > 0 && toLng < -90) {
+            const response = await fetch(`http://127.0.0.1:3000/fly?to=${code}`, {
+                method: 'GET'
+            });
+            
+            if (response.ok) {
+                console.log(`Flying to ${code}`);
+                await currentLocation();
+                await displayAirports();
+            }
+        } else {
         const motionPolyline = L.motion.polyline(points, {
             color: '#ff0000',
             weight: 2,
@@ -234,6 +250,7 @@ async function flyToAirport(code) {
                 await displayAirports();
             }, 3500);
         }
+    }
     } catch (error) {
         console.error('Error during flight:', error);
     }

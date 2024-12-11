@@ -130,6 +130,15 @@ def flask_destination_loca():
     location = Database.get_airport_info(db, icao)
     return jsonify(location)
 
+@app.route('/recordscore')
+def flask_recordhigh():
+    distance = request.args.get('dt')
+    co2 = request.args.get('co')
+    timespent = request.args.get('ts')
+    g_id = game_id
+    Database.record_highscore(db, distance, co2, timespent, g_id)
+    return "done"
+
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
     vastaus = {
