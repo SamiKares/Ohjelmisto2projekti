@@ -183,6 +183,7 @@ async function displayAirports() {
         if (bounds.length > 0) {
             map.fitBounds(bounds);
         }
+        
         //tähän pitää flaskaa siirtymä!
 //lisätty react motion scripta l.motion by Igor Vladyka
 
@@ -193,8 +194,6 @@ async function flyToAirport(code) {
 
         const toAirport = await fetch(`http://127.0.0.1:3000/destloca?icao=${code}`);
         const toData = await toAirport.json();
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        console.log(fromData.longitude_deg, toData.longitude_deg)
         let points;
             points = [
                 [fromData.latitude_deg, fromData.longitude_deg],
