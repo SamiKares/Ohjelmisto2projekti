@@ -74,7 +74,7 @@ def flask_easterner():
 
 @app.route('/currentloca')
 def flask_current_loca():
-    icao = request.args.get('icao')
+    icao = Database.pull_location(db).get('location')
     location = Database.get_airport_info(db, icao)
     return jsonify(location)
 @app.route('/create_game')
@@ -123,6 +123,12 @@ def flask_check_goal():
 def flask_visited():
     data = visited
     return jsonify(data)
+
+@app.route('/destloca')
+def flask_destination_loca():
+    icao = request.args.get('icao')
+    location = Database.get_airport_info(db, icao)
+    return jsonify(location)
 
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
