@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Etusivu</title>
+    <script src="Projektitestiscript.js" defer></script>
+    <style>
+    body {
+        background-color: rgb(34, 34, 33);
+        font-family: "Nunito Sans", sans-serif;
+        
+    }
+
+    img {
+        width: 100%;
+        align-items: center;  
+        padding-bottom: 10px;
+         
+    }
+
+    .teksti {
+        color:rgb(249, 249, 249);
+        text-align: left;
+        text-overflow:inherit;
+        margin: auto;
+        padding: 10px;
+               
+    }
+
+    h1 {
+       color:wheat;
+       font-size: 24px; 
+       text-align: center;
+    }
+
+    .header {
+        width: 100%;
+    
+    }
+
+    .logo {
+        position: absolute;
+        left: 5px;
+        top: 1px;
+        width: 50px;
+        }
+        
+    nav {
+            background-color: #333;
+            padding: 1rem;
+            margin-bottom: 20px;
+            text-align: right;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        
+    nav a {
+            color: rgb(249, 249, 245);    
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: bold;
+            text-align: right;
+    }
+
+    nav a:hover {
+        color: #8a8a8a;
+    }
+
+    .container {
+        position: relative;
+        max-width: 800px;
+        margin:auto;
+    }
+
+    footer {
+        text-align: center;
+        color: #666;
+        margin-top: 40px;
+        padding: 20px;
+        
+    }   
+
+
+    </style>
+
+</head>    
+<body>
+    <div class="container"> 
+    <header class="header">
+        <div class="logo"><img src="icons/airport.png" alt= "lgo" class="logo"></div>
+        <nav class="nav">
+            <a class="play-game-button" href="indexOma.html">Play the game</a>
+            <a href="#" onClick="MyWindow=window.open('http://127.0.0.1:3000/create_game','MyWindow','width=150,height=50'); return false;">Create new game id</a>
+            <a href="#" onClick="LoreWindow=window.open('maailmanymparimainstory.txt','LoreWindow','width=600,height=500'); return false;">Lore</a>
+        </nav>
+    </header> 
+    
+<main>      
+    <h1>Reittilennoilla maailman ympäri peli.</h1>
+
+    <img src="img/frontpagebackground.jpg" alt="kaahauskuva"
+    style="float: inline-start;">
+
+<p class="teksti">Matka maailmanypäri peliprojektin etusivu</p>
+
+</main>
+<footer>
+    <p>© Sami Karesniemi, Erno Niiranen, Nico Jokinen.</p>
+</footer>
+</div>    
+
+
+</body>
+</html>
+

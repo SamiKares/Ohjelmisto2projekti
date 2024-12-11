@@ -452,9 +452,8 @@ main {
 }
 
 #restbutton {
-  position: absolute;
-  right: -55; 
-  top: 60%; 
+  right: auto; 
+  top: auto; 
   transform: translateY(-50%); 
 }
 
