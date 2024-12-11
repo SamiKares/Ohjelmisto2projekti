@@ -309,14 +309,14 @@ main {
 
 @media screen and (min-width: 769px) {
   main.flex-wrap {
-    align-items: flex-start; /* Align items to the top */
+    align-items: flex-start;
   }
 
 
   .destination-progress.full-width {
-    order: 3; /* Ensure it appears after map and boxes in larger screens */
-    width: 100%; /* Full width across the container */
-    margin-top: 1rem; /* Add some top margin */
+    order: 3;
+    width: 100%; 
+    margin-top: 1rem;
   }
 }
 
