@@ -141,20 +141,19 @@ async function displayAirports() {
                         tempGIF.src = 'img/cold.gif';
                     } else {
                         tempGIF.src = 'img/hot.gif';
-                    }
+                    }                                               // Simppeli sään ja lämpötilan checkaaminen
+                                                                    // ja kuvan vaihtaminen
 
-                    if (condition.includes('rain')) {               // checkaa sään ja vaihtaa
-                        conditionGIF.src = 'img/rain.gif';          // GIF sen mukaan
-                    } else if (condition.includes('cloud')) {
-                        conditionGIF.src = 'img/cloudy.gif';
-                    } else if (condition.includes('clear')) {
-                        conditionGIF.src = 'img/sun.gif';
-                    } else if (condition.includes('storm')) {
-                        conditionGIF.src = 'img/storm.gif';
-                    } else if (condition.includes('snow')) {
-                        conditionGIF.src = 'img/snow.gif';
-                    } else if (condition.includes('rain')) {
+                    if (condition.includes('rain') || condition.includes('sade')) {         
                         conditionGIF.src = 'img/rain.gif';
+                    } else if (condition.includes('cloud') || condition.includes('pilvinen')) {
+                        conditionGIF.src = 'img/cloudy.gif';
+                    } else if (condition.includes('clear') || condition.includes('selkeä')) {
+                        conditionGIF.src = 'img/sun.gif';
+                    } else if (condition.includes('storm') || condition.includes('ukkonen')) {
+                        conditionGIF.src = 'img/storm.gif';
+                    } else if (condition.includes('snow') || condition.includes('lumi')) {
+                        conditionGIF.src = 'img/snow.gif';
                     } else {
                         conditionGIF.src = 'img/cloudy.gif';
                     }
