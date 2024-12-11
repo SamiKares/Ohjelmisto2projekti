@@ -1,0 +1,70 @@
+erno tässä 
+async function flyToAirport(code) {
+    try {
+        const fromAirport = await fetch(`http://127.0.0.1:3000/currentloca?icao=${currentloca}`);
+        const fromData = await fromAirport.json();
+        
+        const toAirport = await fetch(`http://127.0.0.1:3000/currentloca?icao=${code}`);
+        const toData = await toAirport.json();
+
+        let fromLng = fromData.longitude_deg;
+        let toLng = toData.longitude_deg;
+
+        // If we're crossing the Pacific eastward (e.g. Japan to USA)
+        if (fromLng > 0 && toLng < -90) {
+            // Skip animation, just make the API call and update
+            const response = await fetch(`http://127.0.0.1:3000/fly?to=${code}`, {
+                method: 'GET'
+            });
+
+            if (response.ok) {
+                console.log(`Flying to ${code}`);
+                currentloca = code;
+                await currentLocation();
+                await displayAirports();
+            }
+        } else {
+            // Normal route with animation for other cases
+            const start = [fromData.latitude_deg, fromData.longitude_deg];
+            const end = [toData.latitude_deg, toData.longitude_deg];
+            const coordinates = getIntermediatePoints(start, end);
+
+            const motionPolyline = L.motion.polyline(coordinates, {
+                color: '#ff0000',
+                weight: 2,
+                dashArray: '5, 10'
+            }, {
+                auto: true,
+                duration: 3500,
+                easing: L.Motion.Ease.easeInOutQuart
+            }, {
+                removeOnEnd: true,
+                showMarker: true,
+                icon: L.divIcon({
+                    html: "<i class='fas fa-plane' style='font-size: 24px; color: black;'></i>",
+                    iconSize: L.point(24, 24),
+                    iconAnchor: [12, 12],
+                    className: 'moving-plane'
+                })
+            });
+
+            motionPolyline.addTo(map);
+            map.fitBounds(coordinates);
+
+            const response = await fetch(`http://127.0.0.1:3000/fly?to=${code}`, {
+                method: 'GET'
+            });
+
+            if (response.ok) {
+                console.log(`Flying to ${code}`);
+                currentloca = code;
+                setTimeout(async () => {
+                    await currentLocation();
+                    await displayAirports();
+                }, 3500);
+            }
+        }
+    } catch (error) {
+        console.error('Error during flight:', error);
+    }
+}
