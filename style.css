@@ -285,11 +285,42 @@ main {
   margin: 0 0 1rem 0;
 }
 
+
+@media screen and (max-width: 768px) {
+  main.flex-wrap {
+    flex-direction: column;
+  }
+
+  #map {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .boxes {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .destination-progress {
+    width: 100%;
+    margin-top: 1rem;
+  }
+}
+
+
 @media screen and (min-width: 769px) {
   main.flex-wrap {
-    display: flex;
-    align-items: flex-start;
+    align-items: flex-start; /* Align items to the top */
   }
+
+
+  .destination-progress.full-width {
+    order: 3; /* Ensure it appears after map and boxes in larger screens */
+    width: 100%; /* Full width across the container */
+    margin-top: 1rem; /* Add some top margin */
+  }
+}
+
 
   #map {
     width: 65%;
@@ -302,18 +333,15 @@ main {
   .boxes {
     width: calc(35% - 1rem);
     padding-left: 0;
+    display: flex;
+    flex-direction: column;
   }
-}
 
-/* Box styles */
-.box {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: black;
-  border-radius: 8px;
-  padding: 0.75rem;
-  box-shadow: rgba(0, 0, 0, 0.3) 3px 3px 10px;
-  margin-bottom: 0.75rem;
-}
+  .destination-progress {
+    width: 100%;
+    margin-top: auto;
+  }
+
 
 .box h2,
 .box figure {
@@ -323,19 +351,18 @@ main {
 .destination-progress {
   margin-top: 20px;
 }
-.container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+
 
 .checkpoint-container {
-  position: relative;
+  width: 100vw; 
+  margin-left: calc(-50vw + 50%); 
+  padding: 1rem 0; 
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100px;
+  gap: 1rem; 
+  position: relative; 
+  z-index: 2; 
   overflow: hidden;
 }
 
@@ -345,12 +372,13 @@ main {
   justify-content: center;
   align-items: center;
   width: auto;
-  font-size: 2em;
+  font-size: 3em;
   text-align: center;
-  left: -100%; /* Start from left side */
+  left: -100%; 
   transition: left 0.5s ease, opacity 0.5s ease;
   opacity: 0;
   padding: 0 20px;
+  transform: translateX(100%);
 }
 
 .checkpoint:nth-child(1) {
@@ -360,30 +388,37 @@ main {
 }
 
 .checkpoint:nth-child(2) {
-  left: calc(50% + 100px);
+  left: calc(50% + 150px);
   transform: translateX(-50%);
   opacity: 0.5;
 }
 
 .checkpoint:nth-child(3) {
-  left: calc(50% + 200px);
+  left: calc(50% + 350px);
   transform: translateX(-50%);
   opacity: 0.2;
 }
 
 .checkpoint.active {
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 1;
+  transform: translateX(-100%);
+  opacity: 0.2;
 }
 .checkpoint.next {
-  transform: translateX(200px);
-  opacity: 0;
+  transform: translateX(0);
+  opacity: 1;
 }
 
 .checkpoint.reached {
   opacity: 1;
 }
+
+#checkpoints {
+  width: 100%;
+  margin: 0; 
+  padding: 0; 
+  background: none; 
+}
+
 
 .checkmark {
   width: 50px;
