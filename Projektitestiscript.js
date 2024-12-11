@@ -1,22 +1,28 @@
 //valitse kartan alkupaikka
  const map = L.map('map', {
-            center: [51.505, -0.09], // London coordinates
-            zoom: 6,
-            minZoom: 3,  // Minimum zoom level
-            maxZoom: 10, // Maximum zoom level
-            zoomControl: true, // Show the default zoom controls
-            zoomDelta: 0.5,    // Allow fractional zoom levels
-            zoomSnap: 0.5,     // Snap to 0.5 zoom levels
-            wheelDebounceTime: 40 // Debounce wheel events
-        });
+    worldCopyJump: true,
+    maxBounds: [[-90, -180], [90, 180]],
+    lang: 'en',
+    center: [51.505, -0.09], // London coordinates
+    zoom: 6,
+    minZoom: 3,
+    maxZoom: 10,
+    zoomControl: true,
+    zoomDelta: 0.5,
+    zoomSnap: 0.5,
+    wheelDebounceTime: 40,
+    continuousWorld: true    // Add this
+});
 //tää on vaan testiä varte
 let distancetraveled = 0
 let currentLocationMarker = null;
 let airportMarkers = [];
 let currentloca = 'EGGW'
 
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
+    attribution: '© OpenStreetMap contributors',
+    lang: 'en'
 }).addTo(map);
 //muokkaa easterner datan leafletin muotoo
 function transformAirportData(airport) {
@@ -121,6 +127,37 @@ async function displayAirports() {
                     document.getElementById('airport-temp-print').innerHTML = `${weatherData.main.temp.toFixed(1)}°C`;
                     document.getElementById('airport-wind-print').innerHTML = `${weatherData.wind.speed}M/S`;
                     document.getElementById('airport-name').innerHTML = `${airport.name}`
+
+                    const tempGIF = document.querySelector('#airport-temp img');
+                    const conditionGIF = document.querySelector('#airport-conditions img');
+                    const windGIF = document.querySelector('#airport-wind img');
+
+                    const temp = weatherData.main.temp;
+                    const condition = weatherData.weather[0].main.toLowerCase();
+                    const windSpeed = weatherData.wind.speed;
+
+                    if (temp < 0) {
+                        tempGIF.src = 'img/cold.gif';
+                    } else {
+                        tempGIF.src = 'img/hot.gif';
+                    }
+
+                    if (condition.includes('rain')) {               // checkaa sään ja vaihtaa
+                        conditionGIF.src = 'img/rain.gif';          // GIF sen mukaan
+                    } else if (condition.includes('cloud')) {
+                        conditionGIF.src = 'img/cloudy.gif';
+                    } else if (condition.includes('clear')) {
+                        conditionGIF.src = 'img/sun.gif';
+                    } else if (condition.includes('storm')) {
+                        conditionGIF.src = 'img/storm.gif';
+                    } else if (condition.includes('snow')) {
+                        conditionGIF.src = 'img/snow.gif';
+                    } else if (condition.includes('rain')) {
+                        conditionGIF.src = 'img/rain.gif';
+                    } else {
+                        conditionGIF.src = 'img/cloudy.gif';
+                    }
+
                     const flyButton = popupContent.querySelector('.fly-to');
                     flyButton.addEventListener('click', () => {
                         const adderdistance = parseFloat(`${airport.distance.toFixed(2)}`)
@@ -147,55 +184,88 @@ async function displayAirports() {
         }
         //tähän pitää flaskaa siirtymä!
 //lisätty react motion scripta l.motion by Igor Vladyka
+
+function getIntermediatePoints(start, end, numPoints = 5) {
+    const points = [];
+    for (let i = 0; i <= numPoints; i++) {
+        const fraction = i / numPoints;
+        const lat = start[0] + (end[0] - start[0]) * fraction;
+        const lng = start[1] + (end[1] - start[1]) * fraction;
+        points.push([lat, lng]);
+    }
+    return points;
+}
+
+function getIntermediatePoints(start, end, numPoints = 5) {
+    let startLng = start[1];
+    let endLng = end[1];
+
+    // Special handling for Tokyo to San Francisco (or similar trans-Pacific routes)
+    if (startLng > 0 && endLng < 0) {
+        endLng += 360; // This makes it go east across the Pacific
+    }
+
+    const points = [];
+    for (let i = 0; i <= numPoints; i++) {
+        const fraction = i / numPoints;
+        const lat = start[0] + (end[0] - start[0]) * fraction;
+        let lng = startLng + (endLng - startLng) * fraction;
+
+        // Normalize longitude back to -180/180 range
+        lng = ((lng + 540) % 360) - 180;
+        points.push([lat, lng]);
+    }
+    return points;
+}
 async function flyToAirport(code) {
     try {
-        // nykyinen sijainti muuttujaan
         const fromAirport = await fetch(`http://127.0.0.1:3000/currentloca?icao=${currentloca}`);
         const fromData = await fromAirport.json();
-        console.log(fromAirport)
-        // määränpää muuttujaan
+
         const toAirport = await fetch(`http://127.0.0.1:3000/currentloca?icao=${code}`);
         const toData = await toAirport.json();
 
-        // luo reitin
-        const coordinates = [
-            [fromData.latitude_deg, fromData.longitude_deg],
-            [toData.latitude_deg, toData.longitude_deg]
-        ];
-/*
-        // puhdistus
-        map.eachLayer((layer) => {
-            if (layer instanceof L.Motion.Polyline) {
-                map.removeLayer(layer);
-            }
+        let points;
+
+        // If crossing the Pacific (e.g., from Japan to USA)
+        if (fromData.longitude_deg > 100 && toData.longitude_deg < -100) {
+            // Create path through the Pacific
+            points = [
+                [fromData.latitude_deg, fromData.longitude_deg],                // Start point
+                [fromData.latitude_deg, 179.9],                                // Before dateline
+                [(fromData.latitude_deg + toData.latitude_deg)/2, -179.9],     // After dateline
+                [toData.latitude_deg, toData.longitude_deg]                    // End point
+            ];
+        } else {
+            // Normal route for all other cases
+            points = [
+                [fromData.latitude_deg, fromData.longitude_deg],
+                [toData.latitude_deg, toData.longitude_deg]
+            ];
+        }
+
+        const motionPolyline = L.motion.polyline(points, {
+            color: '#ff0000',
+            weight: 2,
+            dashArray: '5, 10'
+        }, {
+            auto: true,
+            duration: 3500,
+            easing: L.Motion.Ease.easeInOutQuart
+        }, {
+            removeOnEnd: true,
+            showMarker: true,
+            icon: L.divIcon({
+                html: "<i class='fas fa-plane' style='font-size: 24px; color: black;'></i>",
+                iconSize: L.point(24, 24),
+                iconAnchor: [12, 12],
+                className: 'moving-plane'
+            })
         });
-*/
-const motionPolyline = L.motion.polyline(coordinates, {
-    // Style options
-    color: '#ff0000',  // or 'khaki' depending on your preference
-    weight: 2,
-    dashArray: '5, 10'
-}, {
-    // Motion options
-    auto: true,
-    duration: 3500,    // 7 seconds animation (using the longer duration from second example)
-    easing: L.Motion.Ease.easeInOutQuart
-}, {
-    // Marker options
-    removeOnEnd: true,
-    showMarker: true,
-    icon: L.divIcon({
-        html: "<i class='fas fa-plane' style='transform: ; font-size: 24px; color: black;'></i>",
-        iconSize: L.point(24, 24),
-        iconAnchor: [12, 12],
-        className: 'moving-plane'
 
-    })
-});
+        motionPolyline.addTo(map);
+        map.fitBounds(points);
 
-// Add to map and fit bounds
-motionPolyline.addTo(map);
-map.fitBounds(coordinates);
         const response = await fetch(`http://127.0.0.1:3000/fly?to=${code}`, {
             method: 'GET'
         });
@@ -206,7 +276,7 @@ map.fitBounds(coordinates);
             setTimeout(async () => {
                 await currentLocation();
                 await displayAirports();
-            }, 3500);  // Same as animation duration
+            }, 3500);
         }
     } catch (error) {
         console.error('Error during flight:', error);
@@ -220,6 +290,13 @@ map.fitBounds(coordinates);
         });
         }
    }
+
+//pelaajan nimi juttu
+async function playernamequery() {
+    let playerName = prompt("Please enter your name:");
+    document.getElementById('player-name').textContent = `Player name: ${playerName}`
+}
+//matkadata
 let totalHours = 0;
 let tirednessHours = 0;
 let tirednessMeter = 0;
@@ -277,4 +354,5 @@ function updateTiredness() {
         `Väsymyksesi: ${Math.round(tirednessMeter)} / 100%`;
 }
 document.addEventListener('DOMContentLoaded', displayAirports);
+playernamequery()
 
