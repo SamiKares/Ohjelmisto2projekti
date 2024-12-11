@@ -71,7 +71,7 @@ async function currentLocation() {
         `);
 
     } catch (error) {
-        console.error('Error displaying current location:', error);
+        //console.error('Error displaying current location:', error);
     }
 }
 currentLocation()
