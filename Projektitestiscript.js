@@ -127,6 +127,37 @@ async function displayAirports() {
                     document.getElementById('airport-temp-print').innerHTML = `${weatherData.main.temp.toFixed(1)}°C`;
                     document.getElementById('airport-wind-print').innerHTML = `${weatherData.wind.speed}M/S`;
                     document.getElementById('airport-name').innerHTML = `${airport.name}`
+
+                    const tempGIF = document.querySelector('#airport-temp img');
+                    const conditionGIF = document.querySelector('#airport-conditions img');
+                    const windGIF = document.querySelector('#airport-wind img');
+
+                    const temp = weatherData.main.temp;
+                    const condition = weatherData.weather[0].main.toLowerCase();
+                    const windSpeed = weatherData.wind.speed;
+
+                    if (temp < 0) {
+                        tempGIF.src = 'img/cold.gif';
+                    } else {
+                        tempGIF.src = 'img/hot.gif';
+                    }
+
+                    if (condition.includes('rain')) {               // checkaa sään ja vaihtaa
+                        conditionGIF.src = 'img/rain.gif';          // GIF sen mukaan
+                    } else if (condition.includes('cloud')) {
+                        conditionGIF.src = 'img/cloudy.gif';
+                    } else if (condition.includes('clear')) {
+                        conditionGIF.src = 'img/sun.gif';
+                    } else if (condition.includes('storm')) {
+                        conditionGIF.src = 'img/storm.gif';
+                    } else if (condition.includes('snow')) {
+                        conditionGIF.src = 'img/snow.gif';
+                    } else if (condition.includes('rain')) {
+                        conditionGIF.src = 'img/rain.gif';
+                    } else {
+                        conditionGIF.src = 'img/cloudy.gif';
+                    }
+
                     const flyButton = popupContent.querySelector('.fly-to');
                     flyButton.addEventListener('click', () => {
                         const adderdistance = parseFloat(`${airport.distance.toFixed(2)}`)
