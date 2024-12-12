@@ -139,6 +139,11 @@ def flask_recordhigh():
     Database.record_highscore(db, distance, co2, timespent, g_id)
     return "done"
 
+@app.route('/highscores')
+def flask_fetch_highscore():
+    data = Database.fetch_highscores(db)
+    return data
+
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
     vastaus = {

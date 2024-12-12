@@ -188,10 +188,6 @@ async function displayAirports() {
 
 async function flyToAirport(code) {
     try {
-        if (code == 'EGGW'){
-            await fetch(`http://127.0.0.1:3000/recordscore?dt=${distancetraveled}&co=${distancetraveled}&ts=${totalHours}`);
-            alert('Läpäisit pelin')
-        }
         const fromAirport = await fetch(`http://127.0.0.1:3000/currentloca`);
         const fromData = await fromAirport.json();
 
