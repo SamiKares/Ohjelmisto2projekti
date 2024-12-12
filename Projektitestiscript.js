@@ -2,9 +2,8 @@
 //valitse kartan alkupaikka
  const map = L.map('map', {
     worldCopyJump: true,
-    //maxBounds: [[-90, -360], [90, 360]],
     lang: 'en',
-    center: [51.505, -0.09], // London coordinates
+    center: [51.505, -0.09],
     zoom: 6,
     minZoom: 3,
     maxZoom: 10,
@@ -12,7 +11,7 @@
     zoomDelta: 0.5,
     zoomSnap: 0.5,
     wheelDebounceTime: 40,
-    continuousWorld: true    // Add this
+    continuousWorld: true   
 });
 
 let distancetraveled = 0;
@@ -20,6 +19,7 @@ let currentLocationMarker = null;
 let airportMarkers = [];
 let flightClass = 'halpa';
 let money = 1000;
+let co2 = 0.1776962314159
 
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -54,7 +54,7 @@ async function currentLocation() {
             locationNow.latitude_deg,
             locationNow.longitude_deg
         ];
-
+//Thank you igor, Igor Vladyka L.Motion script
         const airport = transformAirportData(locationArray);
 
         var airportIcon = L.icon({
@@ -167,7 +167,7 @@ async function displayAirports() {
                         distancetraveled += adderdistance
                         console.log(`${airport.distance.toFixed(2)}`)
                         flyToAirport(airport.code);
-                        document.getElementById('distance-travel').textContent = `${Math.round(distancetraveled)} Km `
+                        document.getElementById('distance-travel').textContent = `${Math.round(distancetraveled)}Km / ${Math.round(distancetraveled*co2)} kg `
                         console.log(distancetraveled)
                         const flightTime = adderdistance/500
                         console.log(flightTime)
@@ -192,6 +192,9 @@ async function displayAirports() {
 
 async function flyToAirport(code) {
     try {
+        if(isValidAirportCode(code)){
+            updateCheckpoints(code);
+        }
         const weatherResponse = await fetch(`http://127.0.0.1:3000/weatherat?airport=${code}`);
         const weatherData = await weatherResponse.json();
         if(weatherData.main.temp <= 1){
@@ -215,7 +218,7 @@ async function flyToAirport(code) {
             }
         }
         if (code == "EGGW"){
-            await fetch(`http://127.0.0.1:3000/recordscore?dt=${distancetraveled}&co=${distancetraveled*0.1}&ts=${totalHours}`)
+            await fetch(`http://127.0.0.1:3000/recordscore?dt=${distancetraveled}&co=${distancetraveled*co2}&ts=${totalHours}`)
             setTimeout(function () {
                 if(confirm("Pääsit maaliin, paina ok siirtyäksesi takaisin etusivulle, josta pääset tarkastelemaan tuloksia")){
                     window.location.href = ('frontpage.html');
@@ -302,20 +305,46 @@ let tirednessHours = 0;
 let tirednessMeter = 0;
 
 //checkpointin checkaaminen, heh
-function updateCheckpoints(currentCheckpointIndex) {
+function updateCheckpoints(currentAirportCode) {
+    if (!currentAirportCode || typeof currentAirportCode !== 'string') {
+        console.warn('Invalid airport code provided');
+        return false;
+    }
+
     const checkpoints = document.querySelectorAll('.checkpoint');
+    
+    const currentCheckpoint = Array.from(checkpoints).find(
+        checkpoint => checkpoint.getAttribute('data-airport') === currentAirportCode
+    );
+
+    if (!currentCheckpoint) {
+        console.warn(`No checkpoint found for airport code: ${currentAirportCode}`);
+        return false;
+    }
+
+    const currentIndex = Array.from(checkpoints).indexOf(currentCheckpoint);
 
     checkpoints.forEach((checkpoint, index) => {
-        if (index === currentCheckpointIndex) {
+        checkpoint.classList.remove('active', 'next', 'reached');
+        if (index < currentIndex) {
+            checkpoint.classList.add('reached');
+        } else if (index === currentIndex) {
             checkpoint.classList.add('active');
-            checkpoint.classList.remove('visited');
-        } else if (index < currentCheckpointIndex) {
-            checkpoint.classList.add('visited');
-            checkpoint.classList.remove('active');
-        } else {
-            checkpoint.classList.remove('active', 'visited');
+        } else if (index === currentIndex + 1) {
+            checkpoint.classList.add('next');
         }
     });
+
+    return true;
+}
+
+function getCheckpointOrder() {
+    return Array.from(document.querySelectorAll('.checkpoint'))
+        .map(checkpoint => checkpoint.getAttribute('data-airport'));
+}
+
+function isValidAirportCode(airportCode) {
+    return document.querySelector(`.checkpoint[data-airport="${airportCode}"]`) !== null;
 }
 
 //peliaika lentoväsymys functio
@@ -365,6 +394,6 @@ function updateFunds() {
     document.getElementById('funds').textContent =
         `Rahat: ${money}`;
 }
-//document.addEventListener('DOMContentLoaded')
+//paska ei toimi ilman playernamequeryä ???!????!?!!!!??? wtf
 document.addEventListener('DOMContentLoaded', displayAirports);
 playernamequery()
