@@ -439,10 +439,75 @@ main {
   stroke-dashoffset: 0;
 }
 
+
+
+.flight-mode-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0.3rem;
+  padding: 0.3rem;
+  border: var(--grey) solid 1px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.flight-mode-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.flight-mode-buttons button {
+  flex-grow: 1;
+  padding: 1rem 0.5rem;
+  font-size: 1rem;
+  background-color: var(--white);
+  border: 2px solid var(--grey);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 300ms;
+  font-weight: bold;
+  max-width: 150px;
+}
+
+.flight-mode-buttons button:hover {
+  background-color: var(--dark-grey);
+  color: var(--white);
+  transform: scale(1.05);
+}
+
+.flight-mode-buttons button.selected {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+.rest-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 #restbutton {
-  right: auto; 
-  top: auto; 
-  transform: translateY(-50%); 
+  padding: 1rem 0.5rem;
+  font-size: 1rem;
+  background-color: var(--white);
+  border: 2px solid var(--grey);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 300ms;
+  font-weight: bold;
+  max-width: 200px;
+}
+
+#restbutton:hover {
+  background-color: var(--dark-grey);
+  color: var(--white);
+  transform: scale(1.05);
 }
 
 .checkmark__check {
