@@ -18,7 +18,8 @@
 let distancetraveled = 0;
 let currentLocationMarker = null;
 let airportMarkers = [];
-
+let flightClass = 'kallis';
+let money = 1000;
 
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -190,6 +191,15 @@ async function displayAirports() {
 
 async function flyToAirport(code) {
     try {
+        if (flightClass == 'kallis'){
+            if(money >= 200){
+            money = money-200;
+            totalHours = totalHours-2;
+            }
+            else{
+                alert('Köyhä, joudut huonompaan luokkaan')
+            }
+        }
         if (code == "EGGW"){
             await fetch(`http://127.0.0.1:3000/recordscore?dt=${distancetraveled}&co=${distancetraveled*0.1}&ts=${totalHours}`)
             setTimeout(function () {
