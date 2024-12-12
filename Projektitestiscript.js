@@ -18,7 +18,7 @@
 let distancetraveled = 0;
 let currentLocationMarker = null;
 let airportMarkers = [];
-let flightClass = 'kallis';
+let flightClass = 'halpa';
 let money = 1000;
 
 
@@ -172,6 +172,7 @@ async function displayAirports() {
                         const flightTime = adderdistance/500
                         console.log(flightTime)
                         travelData(flightTime)
+                        updateFunds();
                     });
 
                     marker.setPopupContent(popupContent);
@@ -191,10 +192,23 @@ async function displayAirports() {
 
 async function flyToAirport(code) {
     try {
+        const weatherResponse = await fetch(`http://127.0.0.1:3000/weatherat?airport=${code}`);
+        const weatherData = await weatherResponse.json();
+        if(weatherData.main.temp <= 1){
+            alert('Kylmä sää viivästyttää lentoasi, ikävää! Aika + 2h')
+            travelData(2)
+        }
+        if(weatherData.weather[0].main == 'Clear'){
+            alert('Täysin pilvetön taivas nopeuttaa lentoasi, hienoa! Aika - 2h, löysit kans 100e')
+            travelData(-2)
+            money = money+100;
+            updateFunds();
+        }
         if (flightClass == 'kallis'){
             if(money >= 200){
             money = money-200;
-            totalHours = totalHours-2;
+            travelData(-2);
+            updateFunds();
             }
             else{
                 alert('Köyhä, joudut huonompaan luokkaan')
@@ -328,6 +342,14 @@ document.getElementById('restbutton').addEventListener('click', () => {
     totalHours += 5;
     updateTiredness();
 });
+document.getElementById('premium-button').addEventListener('click', () => {
+    flightClass = "kallis"
+    const header = document.getElementById('luokka').textContent = `Nykyinen lentoluokka: ${flightClass}`;
+});
+document.getElementById('economy-button').addEventListener('click', () => {
+    flightClass = "halpa"
+    const header = document.getElementById('luokka').textContent = `Nykyinen lentoluokka: ${flightClass}`;
+});
 
 
 function resetTiredness() {
@@ -338,6 +360,10 @@ function resetTiredness() {
 function updateTiredness() {
     document.getElementById('tiredness').textContent =
         `Väsymyksesi: ${Math.round(tirednessMeter)} / 100%`;
+}
+function updateFunds() {
+    document.getElementById('funds').textContent =
+        `Rahat: ${money}`;
 }
 //document.addEventListener('DOMContentLoaded')
 document.addEventListener('DOMContentLoaded', displayAirports);
