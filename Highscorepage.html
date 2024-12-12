@@ -56,9 +56,8 @@
 
         function createTable(data) {
             const table = document.getElementById('dataTable');
-            table.innerHTML = ''; // Clear existing content
+            table.innerHTML = '';
 
-            // Create header row
             const headers = Object.keys(data[0]);
             const headerRow = document.createElement('tr');
             headers.forEach(header => {
@@ -68,7 +67,6 @@
             });
             table.appendChild(headerRow);
 
-            // Create data rows
             data.forEach(item => {
                 const row = document.createElement('tr');
                 headers.forEach(header => {
@@ -80,7 +78,6 @@
             });
         }
 
-        // Call the function when page loads
         fetchDataAndCreateTable();
     </script>
 </body>
