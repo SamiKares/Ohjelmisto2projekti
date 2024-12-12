@@ -44,7 +44,7 @@ class Database:
         return list
     def fetch_highscores(self):
         list = []
-        sql = f"SELECT DistanceTravelled, co2Consumed, DaysTravelled FROM highscores order by g_id DESC limit 10;"
+        sql = f"SELECT g_id, DistanceTravelled, co2Consumed, DaysTravelled FROM highscores order by g_id DESC limit 10;"
         cursor = self.connection.cursor(dictionary=True)
         cursor.execute(sql)
         ran = len(cursor.fetchall())

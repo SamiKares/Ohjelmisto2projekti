@@ -15,10 +15,11 @@
     continuousWorld: true    // Add this
 });
 
-let distancetraveled = 0
+let distancetraveled = 0;
 let currentLocationMarker = null;
 let airportMarkers = [];
-
+let flightClass = 'kallis';
+let money = 1000;
 
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -190,6 +191,22 @@ async function displayAirports() {
 
 async function flyToAirport(code) {
     try {
+        if (flightClass == 'kallis'){
+            if(money >= 200){
+            money = money-200;
+            totalHours = totalHours-2;
+            }
+            else{
+                alert('Köyhä, joudut huonompaan luokkaan')
+            }
+        }
+        if (code == "EGGW"){
+            await fetch(`http://127.0.0.1:3000/recordscore?dt=${distancetraveled}&co=${distancetraveled*0.1}&ts=${totalHours}`)
+            setTimeout(function () {
+                if(confirm("Pääsit maaliin, paina ok siirtyäksesi takaisin etusivulle, josta pääset tarkastelemaan tuloksia")){
+                    window.location.href = ('frontpage.html');
+                    }}, 3600);
+        }
         const fromAirport = await fetch(`http://127.0.0.1:3000/currentloca`);
         const fromData = await fromAirport.json();
 
@@ -262,9 +279,8 @@ async function flyToAirport(code) {
    }
 
 //pelaajan nimi juttu
-async function playernamequery() {
-    let playerName = prompt("Please enter your name:");
-    document.getElementById('player-name').textContent = `Player name: ${playerName}`
+function playernamequery() {
+    alert('Paina ok aloittaaksesi')
 }
 //matkadata
 let totalHours = 0;
@@ -323,26 +339,6 @@ function updateTiredness() {
     document.getElementById('tiredness').textContent =
         `Väsymyksesi: ${Math.round(tirednessMeter)} / 100%`;
 }
+//document.addEventListener('DOMContentLoaded')
 document.addEventListener('DOMContentLoaded', displayAirports);
 playernamequery()
-
-async function pullLoca() {
-    try{
-        const response = await fetch(`http://127.0.0.1:3000/pull_loca`, {
-            method: 'GET'
-        });
-        if (response.ok) {
-            console.log(`Toimii`);
-            const jsonvalue = await response.json()
-            const json = JSON.parse(jsonvalue)
-            const currentIcao = json["location"]
-            console.log(currentIcao)
-        }
-    }
-    catch (error) {
-        console.error('Detailed error:', {
-            message: error.message,
-            error: error
-        });
-        }
-}
