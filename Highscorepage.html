@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            font-family: Arial, sans-serif;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <table id="dataTable"></table>
+
+    <script>
+        async function fetchDataAndCreateTable() {
+            try {
+                const response = await fetch('http://127.0.0.1:3000/highscores');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                createTable(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('dataTable').innerHTML = `
+                    <tr><td>Error loading data. Please try again.</td></tr>
+                `;
+            }
+        }
+
+        function createTable(data) {
+            const table = document.getElementById('dataTable');
+            table.innerHTML = ''; // Clear existing content
+
+            // Create header row
+            const headers = Object.keys(data[0]);
+            const headerRow = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+            // Create data rows
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = item[header];
+                    row.appendChild(td);
+                });
+                table.appendChild(row);
+            });
+        }
+
+        // Call the function when page loads
+        fetchDataAndCreateTable();
+    </script>
+</body>
+</html>

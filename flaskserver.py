@@ -142,7 +142,7 @@ def flask_recordhigh():
 @app.route('/highscores')
 def flask_fetch_highscore():
     data = Database.fetch_highscores(db)
-    return data
+    return jsonify(data)
 
 @app.errorhandler(404)
 def page_not_found(virhekoodi):
