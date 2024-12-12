@@ -154,8 +154,10 @@ async function displayAirports() {
                         conditionGIF.src = 'img/storm.gif';
                     } else if (condition.includes('snow') || condition.includes('lumi')) {
                         conditionGIF.src = 'img/snow.gif';
+                    } else if (condition.includes('fog') || condition.includes('sumu')) {
+                        conditionGIF.src = 'img/fog.gif';
                     } else {
-                        conditionGIF.src = 'img/cloudy.gif';
+                        conditionGIF.src = 'img/cloudy.gif';            // GIF:it saatu = Flaticon.com
                     }
 
                     const flyButton = popupContent.querySelector('.fly-to');
